@@ -19,6 +19,7 @@ const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const AddProduct = lazy(() => import("./pages/AddProduct"));
 const Inventory = lazy(() => import("./pages/Inventory"));
 const StockMovement = lazy(() => import("./pages/StockMovement"));
+const Reports = lazy(() => import("./pages/Reports"));
 const Settings = lazy(() => import("./pages/Settings"));
 
 const LoadingFallback = () => (
@@ -124,6 +125,14 @@ const AppRoutes = () => (
       <ProtectedRoute>
         <Suspense fallback={<LoadingFallback />}>
           <StockMovement />
+        </Suspense>
+      </ProtectedRoute>
+    } />
+    
+    <Route path="/reports" element={
+      <ProtectedRoute>
+        <Suspense fallback={<LoadingFallback />}>
+          <Reports />
         </Suspense>
       </ProtectedRoute>
     } />
