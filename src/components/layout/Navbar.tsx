@@ -36,7 +36,11 @@ const Navbar = ({ title = "Dashboard", sidebarOpen, setSidebarOpen }: NavbarProp
         isScrolled && "shadow-md"
       )}
     >
-      <div className="flex h-16 items-center justify-between px-4 md:px-6">
+      <div className={cn(
+        "flex h-16 items-center justify-between px-4 md:px-6",
+        sidebarOpen ? "lg:ml-64" : "lg:ml-20",
+        "transition-all duration-300"
+      )}>
         <div className="flex items-center gap-4">
           {/* Mobile menu button */}
           <button

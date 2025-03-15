@@ -153,6 +153,7 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
                         ? "bg-primary/10 text-primary font-medium"
                         : "text-gray-600 hover:bg-gray-100/50"
                     )}
+                    title={!isOpen ? item.name : undefined}
                   >
                     <span className={cn("flex-shrink-0", isActive && "text-primary")}>
                       {item.icon}
@@ -181,18 +182,24 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
               <button
                 onClick={handleLogout}
                 className="p-2 rounded-full hover:bg-gray-100/50 transition-colors"
+                title="Sair"
               >
                 <LogOut size={18} className="text-gray-600" />
               </button>
             </div>
           ) : (
-            <button
-              onClick={handleLogout}
-              className="mx-auto flex items-center justify-center p-2 rounded-full hover:bg-gray-100/50 transition-colors"
-              title="Logout"
-            >
-              <LogOut size={18} className="text-gray-600" />
-            </button>
+            <div className="flex flex-col items-center gap-4">
+              <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600" title={user?.name || "Usuário"}>
+                <User size={16} />
+              </div>
+              <button
+                onClick={handleLogout}
+                className="flex items-center justify-center p-2 rounded-full hover:bg-gray-100/50 transition-colors"
+                title="Sair"
+              >
+                <LogOut size={18} className="text-gray-600" />
+              </button>
+            </div>
           )}
         </div>
       </aside>
