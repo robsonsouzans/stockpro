@@ -1,6 +1,7 @@
 
 import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type SidebarHeaderProps = {
   isOpen: boolean;
@@ -24,15 +25,18 @@ const SidebarHeader = ({ isOpen, toggleSidebar }: SidebarHeaderProps) => {
       )}
 
       {/* Toggle button - desktop only */}
-      <button
-        className="hidden lg:block p-1 rounded-full hover:bg-accent transition-colors"
+      <Button
+        variant="ghost"
+        size="icon"
+        className="hidden lg:flex h-8 w-8"
         onClick={toggleSidebar}
+        aria-label={isOpen ? "Recolher menu" : "Expandir menu"}
       >
         <ChevronLeft
           size={18}
           className={cn("text-gray-500 transition-transform duration-300", !isOpen && "rotate-180")}
         />
-      </button>
+      </Button>
     </div>
   );
 };

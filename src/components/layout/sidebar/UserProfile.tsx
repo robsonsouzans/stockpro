@@ -1,6 +1,8 @@
 
 import { User, LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type UserProfileProps = {
   isOpen: boolean;
@@ -26,26 +28,48 @@ const UserProfile = ({ isOpen }: UserProfileProps) => {
               <p className="text-xs text-gray-500">{user?.role || "admin"}</p>
             </div>
           </div>
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={handleLogout}
-            className="p-2 rounded-full hover:bg-gray-100/50 transition-colors"
-            title="Sair"
+            className="h-8 w-8 rounded-full hover:bg-gray-100/50"
+            aria-label="Sair"
           >
             <LogOut size={18} className="text-gray-600" />
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-4">
-          <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600" title={user?.name || "Usuário"}>
-            <User size={16} />
-          </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center justify-center p-2 rounded-full hover:bg-gray-100/50 transition-colors"
-            title="Sair"
-          >
-            <LogOut size={18} className="text-gray-600" />
-          </button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
+                  <User size={16} />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                {user?.name || "Usuário"}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleLogout}
+                  className="h-8 w-8 rounded-full hover:bg-gray-100/50"
+                  aria-label="Sair"
+                >
+                  <LogOut size={18} className="text-gray-600" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                Sair
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       )}
     </div>

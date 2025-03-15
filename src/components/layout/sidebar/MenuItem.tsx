@@ -2,6 +2,7 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type MenuItemProps = {
   path: string;
@@ -16,6 +17,23 @@ const MenuItem = ({ path, name, icon, isOpen, index, animateItems }: MenuItemPro
   const location = useLocation();
   const isActive = location.pathname === path;
 
+  const menuItem = (
+    <Link
+      to={path}
+      className={cn(
+        "flex items-center gap-3 p-3 rounded-lg transition-all duration-200",
+        isActive
+          ? "bg-primary/10 text-primary font-medium"
+          : "text-gray-600 hover:bg-gray-100/50"
+      )}
+    >
+      <span className={cn("flex-shrink-0", isActive && "text-primary")}>
+        {icon}
+      </span>
+      {isOpen && <span className="truncate">{name}</span>}
+    </Link>
+  );
+
   return (
     <li
       className={cn(
@@ -24,21 +42,20 @@ const MenuItem = ({ path, name, icon, isOpen, index, animateItems }: MenuItemPro
       )}
       style={{ transitionDelay: `${index * 50}ms` }}
     >
-      <Link
-        to={path}
-        className={cn(
-          "flex items-center gap-3 p-3 rounded-lg transition-all duration-200",
-          isActive
-            ? "bg-primary/10 text-primary font-medium"
-            : "text-gray-600 hover:bg-gray-100/50"
-        )}
-        title={!isOpen ? name : undefined}
-      >
-        <span className={cn("flex-shrink-0", isActive && "text-primary")}>
-          {icon}
-        </span>
-        {isOpen && <span>{name}</span>}
-      </Link>
+      {!isOpen ? (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              {menuItem}
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              {name}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ) : (
+        menuItem
+      )}
     </li>
   );
 };

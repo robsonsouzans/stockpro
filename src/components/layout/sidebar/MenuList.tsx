@@ -1,5 +1,5 @@
 
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import MenuItem from "./MenuItem";
 import { 
   BarChart3, 
@@ -23,7 +23,7 @@ type MenuListProps = {
 
 const MenuList = ({ isOpen, animateItems }: MenuListProps) => {
   // Menu items
-  const menuItems = [
+  const menuItems: MenuItemType[] = [
     {
       name: "Dashboard",
       icon: <LayoutDashboard size={20} />,
