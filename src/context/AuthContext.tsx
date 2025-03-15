@@ -4,6 +4,13 @@ import { supabase, signIn, signOut } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { User } from '@/types';
 
+// Define a type for the user metadata to properly include avatarUrl
+type UserMetadata = {
+  name?: string;
+  role?: string;
+  avatarUrl?: string;
+};
+
 type AuthContextType = {
   user: User | null;
   isLoading: boolean;
@@ -30,12 +37,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const { data: userData } = await supabase.auth.getUser();
           
           if (userData.user) {
+            const userMetadata = userData.user.user_metadata as UserMetadata;
+            
             setUser({
               id: userData.user.id,
               email: userData.user.email || '',
-              name: userData.user.user_metadata?.name,
-              role: userData.user.user_metadata?.role || 'employee',
-              avatarUrl: userData.user.user_metadata?.avatarUrl || undefined,
+              name: userMetadata?.name,
+              role: userMetadata?.role || 'employee',
+              avatarUrl: userMetadata?.avatarUrl,
             });
             setIsAuthenticated(true);
           }
@@ -53,13 +62,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
         const { user: authUser } = session;
+        const userMetadata = authUser.user_metadata as UserMetadata;
         
         setUser({
           id: authUser.id,
           email: authUser.email || '',
-          name: authUser.user_metadata?.name,
-          role: authUser.user_metadata?.role || 'employee',
-          avatarUrl: authUser.user_metadata?.avatarUrl || undefined,
+          name: userMetadata?.name,
+          role: userMetadata?.role || 'employee',
+          avatarUrl: userMetadata?.avatarUrl,
         });
         
         setIsAuthenticated(true);
@@ -95,12 +105,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { user: authUser } = await signIn(email, password);
       
       if (authUser) {
+        const userMetadata = authUser.user_metadata as UserMetadata;
+        
         setUser({
           id: authUser.id,
           email: authUser.email || '',
-          name: authUser.user_metadata?.name,
-          role: authUser.user_metadata?.role || 'employee',
-          avatarUrl: authUser.user_metadata?.avatarUrl || undefined,
+          name: userMetadata?.name,
+          role: userMetadata?.role || 'employee',
+          avatarUrl: userMetadata?.avatarUrl,
         });
         
         setIsAuthenticated(true);
