@@ -31,12 +31,13 @@ const LoadingFallback = () => (
   </div>
 );
 
-// Inicialização do tema
+// Theme Initializer
 const ThemeInitializer = () => {
   useEffect(() => {
-    // Verificar o tema salvo ou usar o padrão
+    // Check saved theme or use system preference
     const savedTheme = localStorage.getItem('theme');
     
+    // If theme is explicitly set to dark or if no theme is set and system prefers dark
     if (savedTheme === 'dark' || 
         (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       document.documentElement.classList.add('dark');
@@ -45,6 +46,30 @@ const ThemeInitializer = () => {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
+    
+    // Font size and animations
+    const fontSize = localStorage.getItem('fontSize') || '100';
+    document.documentElement.style.fontSize = `${fontSize}%`;
+    
+    if (localStorage.getItem('animationsEnabled') === 'false') {
+      document.documentElement.classList.add('no-animations');
+    }
+    
+    // Add a listener for system preference changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      // Only auto-switch if no explicit preference is saved
+      if (!localStorage.getItem('theme')) {
+        if (e.matches) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+    };
+    
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
   return null;

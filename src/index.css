@@ -45,6 +45,45 @@
     --sidebar-ring: 226 64% 40%;
   }
 
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 13%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 224 76% 55%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 228 22% 65%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 223 47% 18%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 216 34% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 19.1% 26.5%;
+    --input: 217 19.1% 26.5%;
+    --ring: 224 76% 55%;
+
+    --sidebar-background: 222 47% 10%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 224 76% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 216 34% 17%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 217 19.1% 20%;
+    --sidebar-ring: 224 76% 55%;
+  }
+
   * {
     @apply border-border;
   }
@@ -55,13 +94,20 @@
     scroll-behavior: smooth;
   }
 
-  /* Glass effect classes */
-  .glass {
-    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-lg;
+  /* Apply transitions to color-related properties for theme switching */
+  body, body * {
+    @apply transition-colors duration-200;
   }
 
-  .glass-dark {
-    @apply bg-black/10 backdrop-blur-md border border-white/10 shadow-lg;
+  /* No animations class */
+  .no-animations, .no-animations * {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* Glass effect classes */
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-lg dark:bg-black/20 dark:border-white/10;
   }
 
   .glass-card {
@@ -69,7 +115,7 @@
   }
 
   .gradient-background {
-    @apply fixed inset-0 bg-gradient-to-br from-[#f5f7fa] via-[#e2e8f0] to-[#c7d2fe] bg-[length:400%_400%] animate-gradient;
+    @apply fixed inset-0 bg-gradient-to-br from-background via-background to-accent/30 dark:from-background dark:via-background dark:to-accent/10 bg-[length:400%_400%] animate-gradient;
     z-index: -20;
   }
 
@@ -78,8 +124,8 @@
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-primary to-secondary text-white font-medium px-4 py-2 rounded-lg 
-           hover:shadow-md hover:from-primary/90 hover:to-secondary/90 
+    @apply bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-medium px-4 py-2 rounded-lg 
+           hover:shadow-md hover:from-primary/90 hover:to-primary/70 
            transition-all duration-300 ease-in-out transform active:scale-[0.98];
   }
 
@@ -89,14 +135,8 @@
            transition-all duration-300 ease-in-out transform active:scale-[0.98];
   }
 
-  .btn-outline {
-    @apply border border-border bg-transparent text-foreground font-medium px-4 py-2 rounded-lg 
-           hover:bg-accent hover:border-accent hover:shadow-sm 
-           transition-all duration-300 ease-in-out transform active:scale-[0.98];
-  }
-
   .input-field {
-    @apply w-full h-12 px-4 bg-white/80 border border-border rounded-lg focus:ring-2 focus:ring-primary/20 
+    @apply w-full h-12 px-4 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/20 
            focus:border-primary focus:outline-none shadow-sm transition-all duration-300;
   }
 
@@ -105,11 +145,11 @@
   }
 
   .form-label {
-    @apply block text-sm font-medium text-gray-700;
+    @apply block text-sm font-medium text-gray-700 dark:text-gray-300;
   }
 
   .card-shadow {
-    @apply shadow-[0_10px_40px_rgba(0,0,0,0.08)];
+    @apply shadow-[0_10px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.2)];
   }
 
   .card-highlight {
@@ -149,34 +189,65 @@
 
 /* Toast styling */
 .toast-success {
-  @apply bg-green-50 border-l-4 border-green-500 text-green-700;
+  @apply bg-green-50 border-l-4 border-green-500 text-green-700 dark:bg-green-950/30 dark:border-green-500 dark:text-green-400;
 }
 
 .toast-error {
-  @apply bg-red-50 border-l-4 border-red-500 text-red-700;
+  @apply bg-red-50 border-l-4 border-red-500 text-red-700 dark:bg-red-950/30 dark:border-red-500 dark:text-red-400;
 }
 
 .toast-warning {
-  @apply bg-amber-50 border-l-4 border-amber-500 text-amber-700;
+  @apply bg-amber-50 border-l-4 border-amber-500 text-amber-700 dark:bg-amber-950/30 dark:border-amber-500 dark:text-amber-400;
 }
 
 .toast-info {
-  @apply bg-blue-50 border-l-4 border-blue-500 text-blue-700;
+  @apply bg-blue-50 border-l-4 border-blue-500 text-blue-700 dark:bg-blue-950/30 dark:border-blue-500 dark:text-blue-400;
 }
 
-/* Animations for page transitions */
-.page-enter {
-  @apply opacity-0;
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.page-enter-active {
-  @apply opacity-100 transition-opacity duration-300;
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
 }
 
-.page-exit {
-  @apply opacity-100;
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
-.page-exit-active {
-  @apply opacity-0 transition-opacity duration-300;
+.animate-slide-in {
+  animation: slideIn 0.5s ease-out forwards;
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  animation: gradient 15s ease infinite;
+}
+
+/* Responsive utilities */
+.responsive-container {
+  @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Dark mode specific styles */
+.dark .dark-glass {
+  @apply bg-black/40 backdrop-blur-lg border border-white/10;
+}
+
+.dark .text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Button variant for dark mode */
+.dark .btn-dark {
+  @apply bg-accent text-accent-foreground border border-accent-foreground/20 hover:bg-accent/80;
 }

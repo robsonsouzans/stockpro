@@ -90,6 +90,22 @@ export default {
           from: { opacity: "0", transform: "translateY(10px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        slideInRight: {
+          from: { transform: "translateX(100%)" },
+          to: { transform: "translateX(0)" },
+        },
+        slideInLeft: {
+          from: { transform: "translateX(-100%)" },
+          to: { transform: "translateX(0)" },
+        },
+        slideInUp: {
+          from: { transform: "translateY(100%)" },
+          to: { transform: "translateY(0)" },
+        },
+        zoomIn: {
+          from: { transform: "scale(0.95)", opacity: "0" },
+          to: { transform: "scale(1)", opacity: "1" },
+        },
         "gradient-animation": {
           "0%": { backgroundPosition: "0% 50%" },
           "50%": { backgroundPosition: "100% 50%" },
@@ -102,7 +118,11 @@ export default {
         scale: {
           "0%": { transform: "scale(0.95)" },
           "100%": { transform: "scale(1)" },
-        }
+        },
+        "bounce-right": {
+          "0%, 100%": { transform: "translateX(0)" },
+          "50%": { transform: "translateX(5px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -110,12 +130,32 @@ export default {
         "float": "float 6s ease-in-out infinite",
         "shine": "shine 6s infinite linear",
         "fade-in": "fadeIn 0.5s ease-out forwards",
+        "slide-in-right": "slideInRight 0.5s ease-out forwards",
+        "slide-in-left": "slideInLeft 0.5s ease-out forwards",
+        "slide-in-up": "slideInUp 0.5s ease-out forwards",
+        "zoom-in": "zoomIn 0.3s ease-out forwards",
         "gradient": "gradient-animation 15s ease infinite",
         "pulse": "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "scale": "scale 0.3s ease-out forwards",
+        "bounce-right": "bounce-right 1s ease-in-out infinite",
       },
       backdropBlur: {
         xs: "2px",
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: '100%',
+          },
+        },
+      },
+      transitionProperty: {
+        'height': 'height',
+        'width': 'width',
+        'spacing': 'margin, padding',
+      },
+      transitionTimingFunction: {
+        'bounce-in-out': 'cubic-bezier(0.68, -0.55, 0.27, 1.55)',
       },
     },
   },
