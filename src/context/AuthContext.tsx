@@ -7,7 +7,7 @@ import { User } from '@/types';
 // Define a type for the user metadata to properly include avatarUrl
 type UserMetadata = {
   name?: string;
-  role?: string;
+  role?: 'admin' | 'manager' | 'employee';
   avatarUrl?: string;
 };
 
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               id: userData.user.id,
               email: userData.user.email || '',
               name: userMetadata?.name,
-              role: userMetadata?.role || 'employee',
+              role: (userMetadata?.role as 'admin' | 'manager' | 'employee') || 'employee',
               avatarUrl: userMetadata?.avatarUrl,
             });
             setIsAuthenticated(true);
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           id: authUser.id,
           email: authUser.email || '',
           name: userMetadata?.name,
-          role: userMetadata?.role || 'employee',
+          role: (userMetadata?.role as 'admin' | 'manager' | 'employee') || 'employee',
           avatarUrl: userMetadata?.avatarUrl,
         });
         
@@ -111,7 +111,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           id: authUser.id,
           email: authUser.email || '',
           name: userMetadata?.name,
-          role: userMetadata?.role || 'employee',
+          role: (userMetadata?.role as 'admin' | 'manager' | 'employee') || 'employee',
           avatarUrl: userMetadata?.avatarUrl,
         });
         
