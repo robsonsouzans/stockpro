@@ -21,15 +21,39 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Função para armazenar o usuário no localStorage
+const saveUserToLocalStorage = (user: User | null) => {
+  if (user) {
+    localStorage.setItem('user', JSON.stringify(user));
+  } else {
+    localStorage.removeItem('user');
+  }
+};
+
+// Função para recuperar o usuário do localStorage
+const getUserFromLocalStorage = (): User | null => {
+  const userData = localStorage.getItem('user');
+  return userData ? JSON.parse(userData) : null;
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => getUserFromLocalStorage());
   const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!getUserFromLocalStorage());
 
   useEffect(() => {
     // Check for session on mount
     const checkSession = async () => {
       try {
+        // Verifica se já tem usuário no localStorage
+        const localUser = getUserFromLocalStorage();
+        if (localUser) {
+          setUser(localUser);
+          setIsAuthenticated(true);
+          setIsLoading(false);
+          return;
+        }
+
         const { data } = await supabase.auth.getSession();
         
         if (data.session) {
@@ -39,13 +63,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (userData.user) {
             const userMetadata = userData.user.user_metadata as UserMetadata;
             
-            setUser({
+            const newUser = {
               id: userData.user.id,
               email: userData.user.email || '',
               name: userMetadata?.name,
               role: (userMetadata?.role as 'admin' | 'manager' | 'employee') || 'employee',
               avatarUrl: userMetadata?.avatarUrl,
-            });
+            };
+            
+            setUser(newUser);
+            saveUserToLocalStorage(newUser);
             setIsAuthenticated(true);
           }
         }
@@ -64,17 +91,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const { user: authUser } = session;
         const userMetadata = authUser.user_metadata as UserMetadata;
         
-        setUser({
+        const newUser = {
           id: authUser.id,
           email: authUser.email || '',
           name: userMetadata?.name,
           role: (userMetadata?.role as 'admin' | 'manager' | 'employee') || 'employee',
           avatarUrl: userMetadata?.avatarUrl,
-        });
+        };
         
+        setUser(newUser);
+        saveUserToLocalStorage(newUser);
         setIsAuthenticated(true);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
+        saveUserToLocalStorage(null);
         setIsAuthenticated(false);
       }
     });
@@ -84,19 +114,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
+  // Efeito para atualizar o localStorage quando o usuário muda
+  useEffect(() => {
+    saveUserToLocalStorage(user);
+  }, [user]);
+
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
       
       // Demo user special case
       if (email === 'demo' && password === 'demo') {
-        setUser({
+        const demoUser = {
           id: '1',
           email: 'demo@example.com',
           name: 'Demo User',
-          role: 'admin',
+          role: 'admin' as 'admin',
           avatarUrl: '',
-        });
+        };
+        setUser(demoUser);
+        saveUserToLocalStorage(demoUser);
         setIsAuthenticated(true);
         toast.success('Login bem-sucedido!');
         return;
@@ -107,14 +144,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (authUser) {
         const userMetadata = authUser.user_metadata as UserMetadata;
         
-        setUser({
+        const newUser = {
           id: authUser.id,
           email: authUser.email || '',
           name: userMetadata?.name,
           role: (userMetadata?.role as 'admin' | 'manager' | 'employee') || 'employee',
           avatarUrl: userMetadata?.avatarUrl,
-        });
+        };
         
+        setUser(newUser);
+        saveUserToLocalStorage(newUser);
         setIsAuthenticated(true);
         toast.success('Login bem-sucedido!');
       }
@@ -130,6 +169,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       await signOut();
       setUser(null);
+      saveUserToLocalStorage(null);
       setIsAuthenticated(false);
       toast.success('Logout realizado com sucesso');
     } catch (error) {

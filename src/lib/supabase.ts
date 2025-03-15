@@ -10,6 +10,43 @@ const supabaseAnonKey = 'your-supabase-anon-key';
 // Create a single supabase client for the whole app
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// Cache helper functions
+const getCache = <T>(key: string): T | null => {
+  // Verificar se o cache está habilitado
+  if (localStorage.getItem('cacheEnabled') === 'false') {
+    return null;
+  }
+  
+  const cachedData = localStorage.getItem(key);
+  if (!cachedData) return null;
+  
+  try {
+    const { data, expiry } = JSON.parse(cachedData);
+    if (expiry && expiry < Date.now()) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    return data as T;
+  } catch (error) {
+    localStorage.removeItem(key);
+    return null;
+  }
+};
+
+const setCache = <T>(key: string, data: T, ttl = 1000 * 60 * 30): void => {
+  // Verificar se o cache está habilitado
+  if (localStorage.getItem('cacheEnabled') === 'false') {
+    return;
+  }
+  
+  try {
+    const expiry = ttl ? Date.now() + ttl : null;
+    localStorage.setItem(key, JSON.stringify({ data, expiry }));
+  } catch (error) {
+    console.error('Error setting cache:', error);
+  }
+};
+
 // Auth helper functions
 export const signIn = async (email: string, password: string) => {
   // For demo user
@@ -20,7 +57,8 @@ export const signIn = async (email: string, password: string) => {
         email: 'demo@example.com',
         user_metadata: {
           name: 'Demo User',
-          role: 'admin'
+          role: 'admin',
+          avatarUrl: ''
         }
       },
       session: {
@@ -96,4 +134,34 @@ export const updateUserProfile = async (userId: string, data: any) => {
     toast.error(error.message || 'Erro ao atualizar perfil');
     throw error;
   }
+};
+
+// Funções de serviços de dados com cache
+export const fetchWithCache = async <T>(
+  key: string,
+  fetchFn: () => Promise<T>,
+  ttl = 1000 * 60 * 5 // 5 minutos por padrão
+): Promise<T> => {
+  // Tentar obter do cache primeiro
+  const cachedData = getCache<T>(key);
+  if (cachedData) {
+    return cachedData;
+  }
+  
+  // Se não estiver em cache ou expirado, buscar novos dados
+  const data = await fetchFn();
+  
+  // Armazenar em cache
+  setCache(key, data, ttl);
+  
+  return data;
+};
+
+// Função utilitária para invalidar cache
+export const invalidateCache = (keyPattern: string) => {
+  Object.keys(localStorage).forEach(key => {
+    if (key.includes(keyPattern)) {
+      localStorage.removeItem(key);
+    }
+  });
 };
