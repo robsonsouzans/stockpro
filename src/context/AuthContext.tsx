@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               email: userData.user.email || '',
               name: userData.user.user_metadata?.name,
               role: userData.user.user_metadata?.role || 'employee',
-              avatarUrl: userData.user.user_metadata?.avatar_url,
+              avatarUrl: userData.user.user_metadata?.avatarUrl,
             });
             setIsAuthenticated(true);
           }
@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           email: authUser.email || '',
           name: authUser.user_metadata?.name,
           role: authUser.user_metadata?.role || 'employee',
-          avatarUrl: authUser.user_metadata?.avatar_url,
+          avatarUrl: authUser.user_metadata?.avatarUrl,
         });
         
         setIsAuthenticated(true);
@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           email: authUser.email || '',
           name: authUser.user_metadata?.name,
           role: authUser.user_metadata?.role || 'employee',
-          avatarUrl: authUser.user_metadata?.avatar_url,
+          avatarUrl: authUser.user_metadata?.avatarUrl,
         });
         
         setIsAuthenticated(true);
