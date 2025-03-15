@@ -15,7 +15,7 @@ type MenuItemProps = {
 
 const MenuItem = ({ path, name, icon, isOpen, index, animateItems }: MenuItemProps) => {
   const location = useLocation();
-  const isActive = location.pathname === path;
+  const isActive = location.pathname === path || location.pathname.startsWith(`${path}/`);
 
   const menuItem = (
     <Link
@@ -24,13 +24,17 @@ const MenuItem = ({ path, name, icon, isOpen, index, animateItems }: MenuItemPro
         "flex items-center gap-3 p-3 rounded-lg transition-all duration-200",
         isActive
           ? "bg-primary/10 text-primary font-medium"
-          : "text-gray-600 hover:bg-gray-100/50"
+          : "text-sidebar-foreground hover:bg-sidebar-accent"
       )}
     >
-      <span className={cn("flex-shrink-0", isActive && "text-primary")}>
+      <span className={cn("flex-shrink-0", isActive && "text-primary")} aria-hidden="true">
         {icon}
       </span>
-      {isOpen && <span className="truncate">{name}</span>}
+      {isOpen && (
+        <span className="truncate transition-opacity duration-200">
+          {name}
+        </span>
+      )}
     </Link>
   );
 
@@ -48,7 +52,7 @@ const MenuItem = ({ path, name, icon, isOpen, index, animateItems }: MenuItemPro
             <TooltipTrigger asChild>
               {menuItem}
             </TooltipTrigger>
-            <TooltipContent side="right">
+            <TooltipContent side="right" className="font-medium">
               {name}
             </TooltipContent>
           </Tooltip>

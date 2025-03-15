@@ -1,5 +1,5 @@
 
-import { LogOut, User, Settings, ChevronRight } from "lucide-react";
+import { LogOut, User, Settings, ChevronRight, Upload } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { 
@@ -17,6 +17,8 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type UserProfileProps = {
   isOpen: boolean;
@@ -25,6 +27,7 @@ type UserProfileProps = {
 const UserProfile = ({ isOpen }: UserProfileProps) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [avatar, setAvatar] = useState<string>(user?.avatarUrl || "");
 
   const handleLogout = async () => {
     await logout();
@@ -32,6 +35,28 @@ const UserProfile = ({ isOpen }: UserProfileProps) => {
 
   const handleNavigateToSettings = () => {
     navigate("/settings");
+  };
+
+  // Simulação de upload de avatar - em produção isso seria feito com uma função real de upload
+  const handleAvatarClick = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const target = e.target as HTMLInputElement;
+      if (target.files && target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target?.result) {
+            setAvatar(e.target.result as string);
+            // Aqui em uma aplicação real você faria o upload para o backend
+            // E atualizaria o objeto user
+          }
+        };
+        reader.readAsDataURL(target.files[0]);
+      }
+    };
+    input.click();
   };
 
   // Get the first letter of the user's name for the avatar
@@ -44,9 +69,12 @@ const UserProfile = ({ isOpen }: UserProfileProps) => {
           <DropdownMenuTrigger asChild>
             <div className="flex items-center justify-between cursor-pointer p-2 rounded-lg hover:bg-sidebar-accent group">
               <div className="flex items-center gap-2">
-                <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                  <span className="font-medium">{userInitial}</span>
-                </div>
+                <Avatar className="h-9 w-9 cursor-pointer hover:opacity-80 transition-opacity" onClick={handleAvatarClick}>
+                  <AvatarImage src={avatar} alt={user?.name || "User"} />
+                  <AvatarFallback className="bg-primary/10 text-primary">
+                    {userInitial}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="text-left">
                   <p className="text-sm font-medium truncate max-w-[120px]">{user?.name || "Usuário"}</p>
                   <p className="text-xs text-sidebar-foreground/60 truncate max-w-[120px]">{user?.email || "email@exemplo.com"}</p>
@@ -58,6 +86,13 @@ const UserProfile = ({ isOpen }: UserProfileProps) => {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              className="cursor-pointer gap-2"
+              onClick={handleAvatarClick}
+            >
+              <Upload className="h-4 w-4" />
+              Alterar foto
+            </DropdownMenuItem>
             <DropdownMenuItem 
               className="cursor-pointer gap-2"
               onClick={handleNavigateToSettings}
@@ -80,9 +115,12 @@ const UserProfile = ({ isOpen }: UserProfileProps) => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary cursor-pointer hover:bg-primary/20 transition-colors">
-                  <span className="font-medium">{userInitial}</span>
-                </div>
+                <Avatar className="h-9 w-9 cursor-pointer hover:opacity-80 transition-opacity" onClick={handleAvatarClick}>
+                  <AvatarImage src={avatar} alt={user?.name || "User"} />
+                  <AvatarFallback className="bg-primary/10 text-primary">
+                    {userInitial}
+                  </AvatarFallback>
+                </Avatar>
               </TooltipTrigger>
               <TooltipContent side="right">
                 {user?.name || "Usuário"}
